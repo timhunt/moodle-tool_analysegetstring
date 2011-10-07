@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<ruleset name="getstring">
+    <description>Moodle get_string calls</description>
+</ruleset>

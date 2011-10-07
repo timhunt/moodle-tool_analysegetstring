@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/analysegetstring/db" VERSION="20111007" COMMENT="XMLDB file for Moodle admin/tool/analysegetstring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_analysegetstring_calls" COMMENT="Records all the get_string calls found in the code." NEXT="tool_analysegetstring_string">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="sourcefile"/>
+        <FIELD NAME="sourcefile" TYPE="char" LENGTH="1024" NOTNULL="true" SEQUENCE="false" COMMENT="The source code file" PREVIOUS="id" NEXT="line"/>
+        <FIELD NAME="line" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Line number on which the call occurs" PREVIOUS="sourcefile" NEXT="sourcecomponent"/>
+        <FIELD NAME="sourcecomponent" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The plugin that the source code belongs to." PREVIOUS="line" NEXT="identifier"/>
+        <FIELD NAME="identifier" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="sourcecomponent" NEXT="stringcomponent"/>
+        <FIELD NAME="stringcomponent" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The plugin or core compoenent that the string comes from." PREVIOUS="identifier" NEXT="dollara"/>
+        <FIELD NAME="dollara" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The third argument to the get_string call, if any." PREVIOUS="stringcomponent"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="sourcecomponent" UNIQUE="false" FIELDS="sourcecomponent" NEXT="identifier"/>
+        <INDEX NAME="identifier" UNIQUE="false" FIELDS="identifier" PREVIOUS="sourcecomponent" NEXT="stringcomponent-identifier"/>
+        <INDEX NAME="stringcomponent-identifier" UNIQUE="false" FIELDS="stringcomponent, identifier" PREVIOUS="identifier"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_analysegetstring_string" COMMENT="Lists all the lang strings defined in the code." PREVIOUS="tool_analysegetstring_calls">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="identifier"/>
+        <FIELD NAME="identifier" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The string identifier." PREVIOUS="id" NEXT="component"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The component the string is defined in." PREVIOUS="identifier"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="identifier" UNIQUE="false" FIELDS="identifier" NEXT="component-identifier"/>
+        <INDEX NAME="component-identifier" UNIQUE="false" FIELDS="component, identifier" PREVIOUS="identifier"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

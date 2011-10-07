@@ -55,3 +55,28 @@ FROM q_tool_analysegetstring_calls
 WHERE stringcomponent <> sourcecomponent
 
 which finds all strings referred to from outside their owning plugin.
+
+This query finds all the strings that are used in quiz access subplugins, but
+which are defined outside that plugin, but within the quiz. It the shows all the
+different components that refer to that string. This lets you determine which
+strings can be moved into the subplugin.
+
+SELECT c.stringcomponent, c.identifier, c.sourcecomponent, COUNT(1)
+
+FROM q_tool_analysegetstring_calls c
+JOIN (
+    SELECT DISTINCT stringcomponent, identifier
+
+    FROM q_tool_analysegetstring_calls
+
+    WHERE stringcomponent <> sourcecomponent
+    AND stringcomponent NOT LIKE ('EXP: %')
+    AND identifier NOT LIKE ('EXP: %')
+    AND (sourcecomponent LIKE 'quizaccess_%')
+) problems ON problems.stringcomponent = c.stringcomponent AND problems.identifier = c.identifier
+
+WHERE (c.stringcomponent LIKE 'quiz%' OR c.stringcomponent = 'mod_quiz')
+
+GROUP BY c.stringcomponent, c.identifier, c.sourcecomponent
+
+ORDER BY c.stringcomponent, c.identifier, c.sourcecomponent
